@@ -1,4 +1,5 @@
-from models import Invoice, Payment
+from models import Invoice, Payment, Client
+import django
 
 def create_invoice(client_id, amount):
     # Business logic to create an invoice
