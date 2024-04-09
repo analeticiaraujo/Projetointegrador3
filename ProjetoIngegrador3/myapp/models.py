@@ -1,9 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class CustomUser(AbstractUser):
-    is_lawyer = models.BooleanField(default=False)
-    is_assistant = models.BooleanField(default=False)
+class User(models.Model):
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    access_level = models.IntegerField()
+
+    def has_access(self, required_level):
+        return self.access_level >= required_level
     
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

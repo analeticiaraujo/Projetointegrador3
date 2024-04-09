@@ -1,5 +1,5 @@
 import hashlib
-import User
+import ProjetoIngegrador3.myapp.User as User
 
 def hash_password(password):
     # Hash the password using SHA-256 algorithm
