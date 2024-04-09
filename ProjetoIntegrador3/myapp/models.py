@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 
 class User(models.Model):
     username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    access_level = models.IntegerField()
+    stored_password = models.CharField(max_length=50)
+    level = models.IntegerField()
     
 
     def has_access(self, required_level):
-        return self.access_level >= required_level
+        return self.level >= required_level
     
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
