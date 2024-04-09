@@ -5,6 +5,7 @@ class User(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     access_level = models.IntegerField()
+    
 
     def has_access(self, required_level):
         return self.access_level >= required_level
