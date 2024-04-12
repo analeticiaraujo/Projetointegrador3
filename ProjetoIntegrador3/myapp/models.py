@@ -11,18 +11,20 @@ class User(models.Model):
         return self.level >= required_level
     
 class Client(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=100)
-    # Add more fields as needed
+    registration_id = models.CharField(max_length=100)
+    client_type = models.CharField(max_length=100)
+    identifier = models.CharField(max_length=100)
 
-class Invoice(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date_created = models.DateTimeField(auto_now_add=True)
-    # Add more fields as needed
+class Bills(models.Model):
+    #ADD CLIENT FOREIGN KEY IF THE BILL IS OF THE PROCESS
+    payment_id = models.CharField(max_length=100)
+    day_of_payment = models.DateField()
+    type_of_bill = models.CharField(max_length=100)
+    fiscal_note = models.CharField(max_length=100)
+    payment_date = models.DateField()
+    payment_method = models.CharField(max_length=100)
 
 class Payment(models.Model):
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date_paid = models.DateTimeField(auto_now_add=True)
-    # Add more fields as needed
+    process = models.CharField(max_length=100)
+    received_value = models.DecimalField(max_digits=10, decimal_places=2)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
