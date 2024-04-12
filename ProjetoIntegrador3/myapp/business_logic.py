@@ -2,40 +2,35 @@ import os
 import django
 from django.conf import settings
 
-
-# Set up Django environment
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 django.setup()
 
-# Import Django models after setup
-from models import Invoice, Payment, Client
+from models import Bills, Payment, Client
 
-def create_invoice(client_id, amount):
+def create_invoice(client_id, received_value):
     try:
-        # Fetch the client object
         client = Client.objects.get(id=client_id)
-        # Create an invoice for the client with the specified amount
-        invoice = Invoice.objects.create(client=client, amount=amount)
-        return invoice
+        bills = Bills.objects.create(client=client, amount=received_value)
+        return bills
     except Client.DoesNotExist:
         print("Client with the specified ID does not exist.")
     except Exception as e:
         print("Error occurred while creating invoice:", e)
 
-def record_payment(invoice_id, amount):
+def record_payment(payment_id, value):
     try:
         # Fetch the invoice object
-        invoice = Invoice.objects.get(id=invoice_id)
+        bills = Bills.objects.get(id=payment_id)
         # Calculate the remaining amount after payment
-        remaining_amount = invoice.amount - amount
+        remaining_amount = Bills.amount - amount
         # Update is_paid status if remaining amount is zero or negative
         if remaining_amount <= 0:
-            invoice.is_paid = True
-        invoice.save()
+            Bills.is_paid = True
+        Bills.save()
         # Record the payment for the invoice
-        payment = Payment.objects.create(invoice=invoice, amount=amount)
+        payment = Payment.objects.create(invoice=payment_id, amount=amount)
         return payment
-    except Invoice.DoesNotExist:
+    except Bills.DoesNotExist:
         print("Invoice with the specified ID does not exist.")
     except Exception as e:
         print("Error occurred while recording payment:", e)
@@ -43,7 +38,7 @@ def record_payment(invoice_id, amount):
 def generate_report():
     try:
         # Retrieve all invoices and payments
-        invoices = Invoice.objects.all()
+        invoices = Bills.objects.all()
         payments = Payment.objects.all()
         # Perform report generation logic here
         # Example:

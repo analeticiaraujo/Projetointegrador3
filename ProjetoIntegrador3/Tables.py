@@ -12,11 +12,11 @@ try:
     cursor = connection.cursor()
 
     # Fetch all records from the User_Table table
-    cursor.execute("SELECT * FROM User_Table")
+    cursor.execute("SELECT * FROM entry_values")
 
     # Fetch column names from the description attribute of cursor
     column_names = [desc[0] for desc in cursor.description]
-    print("\nColumn Names in User_Table:")
+    print("\nColumn Names in entry_values:")
     print(column_names)
 
     # Close the cursor and connection

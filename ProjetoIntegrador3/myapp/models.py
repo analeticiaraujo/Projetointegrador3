@@ -16,7 +16,7 @@ class Client(models.Model):
     identifier = models.CharField(max_length=100)
 
 class Bills(models.Model):
-    #ADD CLIENT FOREIGN KEY IF THE BILL IS OF THE PROCESS
+    #ADD CLIENT FOREIGN KEY and VALUE IF THE BILL IS OF THE PROCESS
     payment_id = models.CharField(max_length=100)
     day_of_payment = models.DateField()
     type_of_bill = models.CharField(max_length=100)
