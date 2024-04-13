@@ -10,21 +10,23 @@ class User(models.Model):
     def has_access(self, required_level):
         return self.level >= required_level
     
-class Client(models.Model):
-    registration_id = models.CharField(max_length=100)
-    client_type = models.CharField(max_length=100)
-    identifier = models.CharField(max_length=100)
+class ClientRegistration(models.Model):
+    registration_id = models.AutoField(primary_key=True)
+    client = models.CharField(max_length=100)
+    client_type = models.CharField(max_length=20)
+    identifier = models.CharField(max_length=14)
 
-class Bills(models.Model):
-    #ADD CLIENT FOREIGN KEY and VALUE IF THE BILL IS OF THE PROCESS
-    payment_id = models.CharField(max_length=100)
+class EntryValue(models.Model):
+    legal_action = models.CharField(max_length=100)
+    received_value = models.DecimalField(max_digits=15, decimal_places=2)
+    client = models.ForeignKey(ClientRegistration, on_delete=models.CASCADE)
+
+class BillPayment(models.Model):
+    payment_id = models.AutoField(primary_key=True)
     day_of_payment = models.DateField()
     type_of_bill = models.CharField(max_length=100)
-    fiscal_note = models.CharField(max_length=100)
-    payment_date = models.DateField()
-    payment_method = models.CharField(max_length=100)
-
-class Payment(models.Model):
-    process = models.CharField(max_length=100)
-    received_value = models.DecimalField(max_digits=10, decimal_places=2)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    invoice = models.CharField(max_length=100)
+    due_date = models.DateField()
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    payment_method = models.CharField(max_length=50)
+    registration = models.ForeignKey(ClientRegistration, on_delete=models.CASCADE)
