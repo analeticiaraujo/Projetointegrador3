@@ -19,4 +19,9 @@ from . import views
 
 urlpatterns = [
     path('', views.pagina_inicial, name='paginaInicial'),
+    path('login/', views.pagina_login, name='paginaLogin'),
+    path('cadastro_clientes/', views.pagina_cadastro_clientes, name='paginaCadastroClientes'),
+    path('recebimentos_e_despesas/', views.pagina_recebimentos_e_despesas, name='paginaRecebimentosDespesas'),
+    path('relatorios/', views.pagina_relatorios, name='paginaRelatorios')
+    
 ]
