@@ -1,5 +1,6 @@
-from django.shortcuts import render, HttpResponse, redirect
-from myapp.models import ClientRegistration, User, BillPayment, EntryValue 
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from myapp.models import ClientRegistration, BillPayment, EntryValue 
+from django.contrib.auth.models import User
 from django.contrib.auth import logout
 
 def pagina_inicial(request):
@@ -23,18 +24,7 @@ def login_view(request):
             return render(request, 'login.html', {'error_message': error_message})
     return render(request, 'login.html')
 
-
 def pagina_cadastro_clientes(request):
-    if request.method == 'POST':
-        client = request.POST.get('client')
-        client_type = request.POST.get('client_type')
-        identifier = request.POST.get('identifier')
-        # Crie um novo cliente no banco de dados
-        ClientRegistration.objects.create(client=client, client_type=client_type, identifier=identifier)
-        return redirect('relatorios')  # Redirecione para o painel após o cadastro
-    return render(request, 'cadastro_clientes.html')
-
-def pagina_edicao_clientes(request):
     if request.method == 'POST':
         if 'registration_id' in request.POST:
             # Editing existing client data
@@ -81,15 +71,24 @@ def pagina_relatorios(request):
     
     return render(request, 'relatorios.html', {'clients': clients, 'entries': entries, 'payments': payments})
 
-def pagina_edicao_usuario(request):
-    user_id = request.session.get('user_id')  # Retrieve the user_id from the request session
-    user = User.objects.get(pk=user_id)
+def pagina_edicao_usuario(request, user_id=None):
+    if user_id is not None:
+        user = get_object_or_404(User, id=user_id)
+    else:
+        user = User()  # Create a new user instance if user_id is not provided
+
     if request.method == 'POST':
-        user.username = request.POST.get('username')
-        user.stored_password = request.POST.get('password')
-        user.level = request.POST.get('level')
-        user.save()
-        return redirect('user_detail', user_id=user.id)  # Redirecionar para a página de detalhes do usuário após a edição
+        if 'delete' in request.POST:
+            # Delete the user if 'delete' button is clicked
+            user.delete()
+            return redirect('user_list')  # Redirect to the user list page after deletion
+        else:
+            # Update the user data if it's an existing user, or create a new user
+            user.username = request.POST.get('username')
+            user.set_password(request.POST.get('password'))  # Use set_password to hash the password
+            user.level = request.POST.get('level')
+            user.save()
+            return redirect('user_detail', user_id=user.id)  # Redirect to user detail page after edit or creation
     return render(request, 'edicao_usuario.html', {'user': user})
 
 def pagina_logout(request):
