@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    {% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Relatórios</h2>
+
+    <h3>Clientes Registrados</h3>
+    <table>
+        <tr>
+            <th>ID de Registro</th>
+            <th>Cliente</th>
+            <th>Tipo de Cliente</th>
+            <th>Identificador</th>
+        </tr>
+        {% for client in clients %}
+        <tr>
+            <td>{{ client.registration_id }}</td>
+            <td>{{ client.client }}</td>
+            <td>{{ client.client_type }}</td>
+            <td>{{ client.identifier }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Valores Recebidos</h3>
+    <table>
+        <tr>
+            <th>Ação Legal</th>
+            <th>Valor Recebido</th>
+            <th>Cliente</th>
+        </tr>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry.legal_action }}</td>
+            <td>{{ entry.received_value }}</td>
+            <td>{{ entry.client.client }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Pagamentos de Contas</h3>
+    <table>
+        <tr>
+            <th>ID de Pagamento</th>
+            <th>Data do Pagamento</th>
+            <th>Tipo de Conta</th>
+            <th>Fatura</th>
+            <th>Data de Vencimento</th>
+            <th>Valor</th>
+            <th>Método de Pagamento</th>
+            <th>Cliente</th>
+        </tr>
+        {% for payment in payments %}
+        <tr>
+            <td>{{ payment.payment_id }}</td>
+            <td>{{ payment.day_of_payment }}</td>
+            <td>{{ payment.type_of_bill }}</td>
+            <td>{{ payment.invoice }}</td>
+            <td>{{ payment.due_date }}</td>
+            <td>{{ payment.amount }}</td>
+            <td>{{ payment.payment_method }}</td>
+            <td>{{ payment.registration.client }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    {% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recebimentos e Despesas</title>
+</head>
+<body>
+    <h2>Recebimentos e Despesas</h2>
+    <form method="post">
+        {% csrf_token %}
+        <h3>Recebimentos</h3>
+        <label for="received_legal_action">Ação Legal:</label><br>
+        <input type="text" id="received_legal_action" name="received_legal_action"><br>
+        <label for="received_value">Valor Recebido:</label><br>
+        <input type="text" id="received_value" name="received_value"><br>
+        <label for="received_client">Cliente:</label><br>
+        <select id="received_client" name="received_client">
+            {% for client in clients %}
+            <option value="{{ client.client_id }}">{{ client.client_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <h3>Despesas</h3>
+        <label for="bill_type">Tipo de Despesa:</label><br>
+        <input type="text" id="bill_type" name="bill_type"><br>
+        <label for="invoice">Fatura:</label><br>
+        <input type="text" id="invoice" name="invoice"><br>
+        <label for="due_date">Data de Vencimento:</label><br>
+        <input type="text" id="due_date" name="due_date"><br>
+        <label for="amount">Valor:</label><br>
+        <input type="text" id="amount" name="amount"><br>
+        <label for="payment_method">Método de Pagamento:</label><br>
+        <input type="text" id="payment_method" name="payment_method"><br>
+        <label for="client_registration">Cliente:</label><br>
+        <select id="client_registration" name="client_registration">
+            {% for client in clients %}
+            <option value="{{ client.client_id }}">{{ client.client_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <input type="submit" value="Salvar">
+    </form>
+</body>
+{% endblock %}
+</html>

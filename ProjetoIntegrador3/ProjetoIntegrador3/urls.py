@@ -20,9 +20,10 @@ from . import views
 urlpatterns = [
     path('', views.pagina_inicial, name='paginaInicial'),
     path('login/', views.login_view, name='paginaLogin'),
-    path('dashboard/', views.dashboard_view, name='paginaDashboard'),
     path('cadastro_clientes/', views.pagina_cadastro_clientes, name='paginaCadastroClientes'),
+    path('edicao_clientes/', views.pagina_edicao_clientes, name='paginaEdicaoclientes'),
     path('recebimentos_e_despesas/', views.pagina_recebimentos_e_despesas, name='paginaRecebimentosDespesas'),
-    path('relatorios/', views.pagina_relatorios, name='paginaRelatorios')
-    
+    path('relatorios/', views.pagina_relatorios, name='paginaRelatorios'),
+    path('edicao_usuario/', views.pagina_edicao_usuario, name='paginaEdicaoUsuario'),
+    path('logout/', views.pagina_logout, name='paginaLogout')
 ]

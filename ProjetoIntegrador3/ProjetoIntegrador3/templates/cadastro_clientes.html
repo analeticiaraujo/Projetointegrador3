@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro e edição de clientes</title>
+</head>
+<body>
+    <h2>Registro e edição de clientes</h2>
+
+    <form method="post">
+        <label for="client">Nome do cliente:</label><br>
+        <input type="text" id="client" name="client" required><br>
+
+        <label for="client_type">Tipo de cliente:</label><br>
+        <input type="text" id="client_type" name="client_type" required><br>
+
+        <label for="identifier">Identificador:</label><br>
+        <input type="text" id="identifier" name="identifier" required><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if registration_id %}
+        <p>Registration ID: {{ registration_id }}</p>
+    {% endif %}
+
+    {% if editing %}
+        <h3>Editar dados do cliente</h3>
+        <form method="post">
+            <input type="hidden" name="registration_id" value="{{ registration_id }}">
+            <label for="client">Nome do cliente:</label><br>
+            <input type="text" id="client" name="client" value="{{ client }}" required><br>
+
+            <label for="client_type">Tipo de cliente:</label><br>
+            <input type="text" id="client_type" name="client_type" value="{{ client_type }}" required><br>
+
+            <label for="identifier">Identificador:</label><br>
+            <input type="text" id="identifier" name="identifier" value="{{ identifier }}" required><br>
+
+            <input type="submit" value="Update">
+        </form>
+    {% endif %}
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <style>
+        /* Estilos para a lista de navegação horizontal */
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover {
+            background-color: #111;
+        }
+    </style>
+</head>
+<body>
+
+<ul>
+    <li><a href="{% url 'paginaInicial' %}">Página Inicial</a></li>
+    <li><a href="{% url 'paginaLogin' %}">Login</a></li>
+    <li><a href="{% url 'paginaCadastroClientes' %}">Cadastro de Clientes</a></li>
+    <li><a href="{% url 'paginaEdicaoclientes' %}">Edicao de Clientes</a></li>
+    <li><a href="{% url 'paginaRecebimentosDespesas' %}">Recebimentos e Despesas</a></li>
+    <li><a href="{% url 'paginaRelatorios' %}">Relatórios</a></li>
+    <li><a href="{% url 'paginaEdicaoUsuario' %}">Edição de Usuário</a></li>
+    <li><a href="{% url 'paginaLogout' %}">Sair</a></li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    {% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+</head>
+<body>
+    <h2>Edit User</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" value="{{ user.username }}"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" value="{{ user.stored_password }}"><br>
+        <label for="level">Level:</label><br>
+        <input type="number" id="level" name="level" value="{{ user.level }}"><br><br>
+        <input type="submit" value="Save Changes">
+    </form>
+</body>
+{% endblock %}
+</html>
