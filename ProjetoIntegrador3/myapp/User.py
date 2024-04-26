@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.shortcuts import render
 from django.conf import settings
-from models import User
+from .models import User
 import psycopg2
 from psycopg2 import Error
 

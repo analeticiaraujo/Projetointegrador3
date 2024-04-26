@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Invoice, Payment, Client
+from .models import EntryValue, ClientRegistration, BillPayment
 
 @login_required
 def create_invoice(request):
@@ -28,7 +28,7 @@ def generate_report(request):
 
 @login_required
 def view_invoice(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
+    invoice = EntryValue.objects.get(id=invoice_id)
     # Check if the user has permission to view this invoice
     if not request.user.has_perm('app.view_invoice') or (invoice.client != request.user and not request.user.is_superuser):
         return render(request, 'access_denied.html')
