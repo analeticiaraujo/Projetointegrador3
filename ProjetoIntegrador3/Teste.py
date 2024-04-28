@@ -3,7 +3,6 @@ import django
 
 # Set the DJANGO_SETTINGS_MODULE environment variable
 os.environ['DJANGO_SETTINGS_MODULE'] = 'ProjetoIntegrador3.settings'  # Replace 'ProjetoIntegrador3.settings' with your actual settings module
-POSTGRES_URL = "postgres://default:ZgvNJnU6W7BR@ep-aged-thunder-a458v4ko-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
 
 # Manually setup Django's application registry
 django.setup()
@@ -12,23 +11,9 @@ django.setup()
 from myapp.models import User
 
 # Import other necessary modules
-import unittest
-import psycopg2
 from django.test import TestCase
 
 class TestCreateUser(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Establish a connection to the database
-        cls.connection = psycopg2.connect(POSTGRES_URL)
-        cls.cursor = cls.connection.cursor()
-
-    @classmethod
-    def tearDownClass(cls):
-        # Close the cursor and connection
-        cls.cursor.close()
-        cls.connection.close()
-
     def test_create_user(self):
         try:
             # Attempt to create a new user
@@ -41,17 +26,17 @@ class TestCreateUser(TestCase):
             self.assertIsNotNone(user_record)
         except Exception as e:
             # If an exception occurs during user creation, print the exception
-            print("Error creating user:", e)
-            # Fail the test explicitly with the exception message
             self.fail("Error creating user: " + str(e))
 
-        # Check if the user exists in the database
-        self.cursor.execute("SELECT * FROM myapp_user WHERE username = 'test_user'")
-        user_record = self.cursor.fetchone()
-        self.assertIsNotNone(user_record)
-    
-    # Clean up after the test
-        new_user.delete()
+    # Ensure that changes made during the test are rolled back after the test completes
+    def tearDown(self):
+        try:
+            # Delete the test user if it exists
+            User.objects.filter(username='test_user').delete()
+        except Exception as e:
+            # If an exception occurs during cleanup, print the exception
+            self.fail("Error cleaning up: " + str(e))
 
 if __name__ == '__main__':
+    import unittest
     unittest.main()

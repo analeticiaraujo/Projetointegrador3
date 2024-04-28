@@ -1,7 +1,9 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
-from myapp.models import ClientRegistration, BillPayment, EntryValue 
-from django.contrib.auth.models import User
-from django.contrib.auth import logout
+from myapp.models import ClientRegistration, BillPayment, EntryValue, User 
+from django.contrib.auth import logout, authenticate, login
+from django.http import HttpResponse
+from django.db import IntegrityError
+
 
 def pagina_inicial(request):
     return HttpResponse('Hello, World!')
@@ -10,19 +12,23 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        try:
-            user = User.objects.get(username=username)
-            if user.stored_password == password:
-                # Authentication successful
-                # Redirect to a specific URL after login, or to a default one
-                return redirect('relatorios')  # Replace 'dashboard' with your desired URL name
-            else:
-                error_message = "Invalid username or password"
-                return render(request, 'login.html', {'error_message': error_message})
-        except User.DoesNotExist:
-            error_message = "Usuário não encontrado"
-            return render(request, 'login.html', {'error_message': error_message})
-    return render(request, 'login.html')
+        
+        # Retrieve users with the provided username
+        users = User.objects.filter(username=username)
+        
+        if users.exists():
+            # Authenticate each user to find the correct one
+            for user in users:
+                user = authenticate(request, username=user.username, password=password)
+                if user is not None:
+                    login(request, user)
+                    # Redirect to the appropriate page after successful login
+                    return redirect('dashboard')  # Replace 'dashboard' with your desired URL
+        
+        # If no user matches the provided credentials, or multiple users are found, show an error
+        return render(request, 'login.html', {'error_message': 'Invalid username or password.'})
+    else:
+        return render(request, 'login.html')
 
 def pagina_cadastro_clientes(request):
     if request.method == 'POST':
@@ -75,7 +81,7 @@ def pagina_edicao_usuario(request, user_id=None):
     if user_id is not None:
         user = get_object_or_404(User, id=user_id)
     else:
-        user = User()  # Create a new user instance if user_id is not provided
+        user = User()
 
     if request.method == 'POST':
         if 'delete' in request.POST:
@@ -87,9 +93,25 @@ def pagina_edicao_usuario(request, user_id=None):
             user.username = request.POST.get('username')
             user.set_password(request.POST.get('password'))  # Use set_password to hash the password
             user.level = request.POST.get('level')
-            user.save()
-            return redirect('user_detail', user_id=user.id)  # Redirect to user detail page after edit or creation
-    return render(request, 'edicao_usuario.html', {'user': user})
+
+            try:
+                user.save()
+                if user_id is None:
+                    return HttpResponse("User created with success!")
+                else:
+                    return redirect('user_detail', user_id=user.id)  # Redirect to user detail page after edit or creation
+            except IntegrityError:
+                return HttpResponse("Username already exists. Please choose a different username.")
+
+    # Fetch all users from the database
+    users = User.objects.all()
+
+    # Pass the users to the template context
+    context = {'users': users, 'user': user}
+
+    return render(request, 'edicao_usuario.html', context)
+
+
 
 def pagina_logout(request):
     logout(request)

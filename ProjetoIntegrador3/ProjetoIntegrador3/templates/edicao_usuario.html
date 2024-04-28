@@ -1,25 +1,137 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    {% extends 'base.html' %}
-
-{% block content %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
+  {% extends 'base.html' %}
+  {% block content %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if user.id %}Edit User{% else %}Create User{% endif %}</title>
 </head>
 <body>
-    <h2>Edit User</h2>
-    <form method="post">
-        {% csrf_token %}
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" value="{{ user.username }}"><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" value="{{ user.stored_password }}"><br>
-        <label for="level">Level:</label><br>
-        <input type="number" id="level" name="level" value="{{ user.level }}"><br><br>
-        <input type="submit" value="Save Changes">
-    </form>
-</body>
-{% endblock %}
+  <h2>User Management</h2>
+  <ul>
+    <li><a href="#" onclick="selectAction('create')">Create User</a></li>
+    <li><a href="#" onclick="selectAction('edit')">Edit User</a></li>
+    <li><a href="#" onclick="selectAction('delete')">Delete User</a></li>
+  </ul>
+
+  <form id="userForm" method="post">
+    {% csrf_token %}
+
+    <fieldset id="userFields">
+      {% if user.id is none %}
+      <legend>Create User</legend>
+      <label for="username">Username:</label><br>
+      <input type="text" id="username" name="username" value=""><br>
+      <label for="password">Password:</label><br>
+      <input type="password" id="password" name="password" value=""><br>
+      <label for="level">Level:</label><br>
+      <select id="level" name="level">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select><br><br>
+      {% elif user.id %}
+      <legend>Edit User</legend>
+      <label for="user_select">Select User:</label><br>
+      <select id="user_select" name="user_id">
+        {% for user in users %}
+        <option value="{{ user.id }}">{{ user.username }}</option>
+        {% endfor %}
+      </select><br><br>
+      <label for="new_username">New Username:</label><br>
+      <input type="text" id="new_username" name="new_username" value=""><br>
+      <label for="new_password">New Password:</label><br>
+      <input type="password" id="new_password" name="new_password" value=""><br>
+      <label for="new_level">New Level:</label><br>
+      <select id="new_level" name="new_level">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select><br><br>
+      {% else %}
+      <p>Please select a user to edit or create a new user.</p>
+      {% endif %}
+    </fieldset>
+
+    <input type="submit" value="{% if user.id %}Save Changes{% else %}Create User{% endif %}" id="submitButton">
+
+  </form>
+
+  <script>
+    function selectAction(action) {
+      const userFields = document.getElementById('userFields');
+      const submitButton = document.getElementById('submitButton');
+
+      switch (action) {
+        case 'create':
+          userFields.textContent = ""; // Clear previous content
+          const createUserContent = `
+            <legend>Create User</legend>
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" value=""><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" value=""><br>
+            <label for="level">Level:</label><br>
+            <select id="level" name="level">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select><br><br>
+          `;
+          userFields.insertAdjacentHTML('beforeend', createUserContent);
+          submitButton.value = "Create User";
+          break;
+        case 'edit':
+          userFields.textContent = ""; // Clear previous content
+          const editUserContent = `
+            <legend>Edit User</legend>
+            <label for="user_select">Select User:</label><br>
+            <select id="user_select" name="user_id">
+                {% for user in users %}
+                  <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select><br><br>
+            <label for="new_username">New Username:</label><br>
+            <input type="text" id="new_username" name="new_username" value=""><br>
+            <label for="new_password">New Password:</label><br>
+            <input type="password" id="new_password" name="new_password" value=""><br>
+            <label for="new_level">New Level:</label><br>
+            <select id="new_level" name="new_level">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select><br><br>
+            `;
+            userFields.insertAdjacentHTML('beforeend', editUserContent);
+            submitButton.value = "Save Changes";
+            break;
+        case 'delete':
+            userFields.textContent = ""; // Clear previous content
+            const deleteUserContent = `
+            <legend>Delete User</legend>
+            <label for="user_select_delete">Select User:</label><br>
+            <select id="user_select" name="user_id">
+                {% for user in users %}
+                  <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+              </select>
+            `;
+            userFields.insertAdjacentHTML('beforeend', deleteUserContent);
+            submitButton.value = "Delete User";
+            submitButton.setAttribute('disabled', true); // Disable submit button for delete action (handled in confirmDelete())
+            break;
+        default:
+            break;
+        }
+    }
+
+    function confirmDelete() {
+        if (confirm("Você tem certeza?")) {
+        document.getElementById('userForm').submit();
+        }
+    }
+    </script>
+    </body>
+    {% endblock %}
 </html>

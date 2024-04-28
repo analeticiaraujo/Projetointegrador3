@@ -1,14 +1,34 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 class User(models.Model):
-    username = models.CharField(max_length=50)
+    username = models.CharField(max_length=50, unique=True)
     stored_password = models.CharField(max_length=50)
     level = models.IntegerField()
     
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
     def has_access(self, required_level):
+
         return self.level >= required_level
+
+    def __str__(self):
+        return self.username
+    
+@receiver(pre_save, sender=User)
+def check_duplicate_username(sender, instance, **kwargs):
+    # Check if there's another user with the same username
+    existing_user = User.objects.filter(username=instance.username).exclude(id=instance.id).first()
+    if existing_user:
+        # Delete the existing user with the same username
+        existing_user.delete()
+
+    
     
 class ClientRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True)
