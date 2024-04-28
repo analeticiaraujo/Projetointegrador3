@@ -4,46 +4,67 @@
 
 {% block content %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro e edição de clientes</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro e edição de clientes</title>
 </head>
 <body>
-    <h2>Registro e edição de clientes</h2>
+  <h2>Registro e edição de clientes</h2>
 
-    <form method="post">
-        <label for="client">Nome do cliente:</label><br>
-        <input type="text" id="client" name="client" required><br>
+  <form id="client-form" method="post">
+    {% csrf_token %}
+    <div id="client-selection">
+      <label for="existing-client">Selecionar cliente existente:</label><br>
+      <select id="existing-client" name="existing_client">
+        <option value="">-- Selecione um cliente --</option>
+        </select>
+    </div>
 
-        <label for="client_type">Tipo de cliente:</label><br>
-        <input type="text" id="client_type" name="client_type" required><br>
+    <div id="client-details">
+      <h3>Dados do cliente</h3>
+      <label for="client">Nome do cliente:</label><br>
+      <input type="text" id="client" name="client" required><br>
 
-        <label for="identifier">Identificador:</label><br>
-        <input type="text" id="identifier" name="identifier" required><br>
+      <label for="client_type">Tipo de cliente:</label><br>
+      <input type="text" id="client_type" name="client_type" required><br>
 
-        <input type="submit" value="Submit">
-    </form>
+      <label for="identifier">Identificador:</label><br>
+      <input type="text" id="identifier" name="identifier" required><br>
 
-    {% if registration_id %}
-        <p>Registration ID: {{ registration_id }}</p>
-    {% endif %}
+      <input type="submit" id="submit-button" value="Criar"> </div>
+  </form>
 
-    {% if editing %}
-        <h3>Editar dados do cliente</h3>
-        <form method="post">
-            <input type="hidden" name="registration_id" value="{{ registration_id }}">
-            <label for="client">Nome do cliente:</label><br>
-            <input type="text" id="client" name="client" value="{{ client }}" required><br>
+  {% if editing %}
+    <script>
+      // Set the form to editing mode (hide selection, show details, update button text)
+      document.getElementById('client-selection').style.display = 'none';
+      document.getElementById('client-details').style.display = 'block';
+      document.getElementById('submit-button').value = 'Atualizar';
 
-            <label for="client_type">Tipo de cliente:</label><br>
-            <input type="text" id="client_type" name="client_type" value="{{ client_type }}" required><br>
+      // Pre-fill form fields with existing client data (assuming data is passed in variables)
+      document.getElementById('client').value = '{{ client }}';
+      document.getElementById('client_type').value = '{{ client_type }}';
+      document.getElementById('identifier').value = '{{ identifier }}';
+    </script>
+  {% endif %}
 
-            <label for="identifier">Identificador:</label><br>
-            <input type="text" id="identifier" name="identifier" value="{{ identifier }}" required><br>
+  <script>
+    // Handle form submission and logic for creating or editing clients (replace with your actual logic)
+    const form = document.getElementById('client-form');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent default form submission
 
-            <input type="submit" value="Update">
-        </form>
-    {% endif %}
+      const isEditing = '{{ editing }}'; // Check if editing mode is active
+
+      if (isEditing) {
+        // Handle client update logic here (e.g., send data to server)
+        alert('Cliente atualizado com sucesso!'); // Replace with your success message
+      } else {
+        // Handle client creation logic here (e.g., send data to server)
+        alert('Cliente criado com sucesso!'); // Replace with your success message
+      }
+    });
+  </script>
 </body>
 {% endblock %}
 </html>

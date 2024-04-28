@@ -77,11 +77,18 @@ def pagina_relatorios(request):
     
     return render(request, 'relatorios.html', {'clients': clients, 'entries': entries, 'payments': payments})
 
+
+def handle_integrity_error(e):
+    # Extract more specific error details from the exception
+    error_message = str(e)  # Replace with more specific logic if needed
+    return HttpResponse(f"Error occurred while saving user data: {error_message}")
+
 def pagina_edicao_usuario(request, user_id=None):
     if user_id is not None:
         user = get_object_or_404(User, id=user_id)
     else:
         user = User()
+    context = {'users': User.objects.all(), 'user': user}  # Fetch all users for the form
 
     if request.method == 'POST':
         if 'delete' in request.POST:
@@ -89,8 +96,15 @@ def pagina_edicao_usuario(request, user_id=None):
             user.delete()
             return redirect('user_list')  # Redirect to the user list page after deletion
         else:
-            # Update the user data if it's an existing user, or create a new user
-            user.username = request.POST.get('username')
+            # Update the user data
+            username = request.POST.get('username')
+            # Check if the provided username belongs to the current user
+            if username != user.username:
+                # Check if the new username already exists
+                if User.objects.filter(username=username).exists():
+                    return HttpResponse("Username already exists. Please choose a different username.")
+            # Update password and level
+            user.username = username
             user.set_password(request.POST.get('password'))  # Use set_password to hash the password
             user.level = request.POST.get('level')
 
@@ -100,14 +114,8 @@ def pagina_edicao_usuario(request, user_id=None):
                     return HttpResponse("User created with success!")
                 else:
                     return redirect('user_detail', user_id=user.id)  # Redirect to user detail page after edit or creation
-            except IntegrityError:
-                return HttpResponse("Username already exists. Please choose a different username.")
-
-    # Fetch all users from the database
-    users = User.objects.all()
-
-    # Pass the users to the template context
-    context = {'users': users, 'user': user}
+            except IntegrityError as e:
+                return handle_integrity_error(e)
 
     return render(request, 'edicao_usuario.html', context)
 

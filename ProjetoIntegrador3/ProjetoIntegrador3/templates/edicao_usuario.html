@@ -15,8 +15,8 @@
     <li><a href="#" onclick="selectAction('delete')">Delete User</a></li>
   </ul>
 
-  <form id="userForm" method="post">
-    {% csrf_token %}
+  <form id="userForm" method="post" action="{% url 'paginaEdicaoUsuario' %}">
+    {% csrf_token %}  
 
     <fieldset id="userFields">
       {% if user.id is none %}
@@ -55,7 +55,6 @@
     </fieldset>
 
     <input type="submit" value="{% if user.id %}Save Changes{% else %}Create User{% endif %}" id="submitButton">
-
   </form>
 
   <script>
