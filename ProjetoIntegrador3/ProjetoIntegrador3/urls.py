@@ -26,6 +26,6 @@ urlpatterns = [
     path('relatorios/', views.pagina_relatorios, name='paginaRelatorios'),
     path('edicao_usuario/', views.pagina_edicao_usuario, name='paginaEdicaoUsuario'),
     path('logout/', views.pagina_logout, name='paginaLogout'),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls)
 
 ]

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro e edição de clientes</title>
+</head>
+<body>
+  <h2>Registro e edição de clientes</h2>
+
+  <ul id="operation-selection">
+    <li><a href="#" onclick="selectAction('create')">Criar novo cliente</a></li>
+    <li><a href="#" onclick="selectAction('edit')">Editar cliente existente</a></li>
+    <li><a href="#" onclick="selectAction('delete')">Deletar cliente existente</a></li>
+  </ul>
+
+  <form id="client-form" method="post" action="{% url 'paginaTesteCliente' %}">
+    {% csrf_token %}
+    <div id="client-details">
+      <label for="edit-existing-client">Selecionar cliente existente:</label><br>
+        <select id="edit-existing-client" name="registration_id">
+        <option value="">-- Selecione um cliente --</option>
+            {% for client in clients %}
+                <option value="{{ client.id }}">{{ client.client }}</option>
+            {% endfor %}
+      <h3>Dados do cliente</h3>
+      <input type="hidden" id="registration_id" name="registration_id">
+      <label for="client">Nome do cliente:</label><br>
+      <input type="text" id="client" name="client" required><br>
+
+      <label for="client_type">Tipo de cliente:</label><br>
+      <select id="client_type" name="client_type" required>
+        <option value="">-- Selecione o tipo de cliente --</option>
+        <option value="Pessoa Física">Pessoa Física</option>
+        <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+      </select><br>
+
+      <label for="identifier">Identificador:</label><br>
+      <input type="text" id="identifier" name="identifier" required><br>
+
+      <label for="legal_action">Ação legal:</label><br>
+      <input type="text" id="legal_action" name="legal_action" required><br>
+
+      <input type="submit" id="submit-button" value="Salvar">
+    </div>
+  </form>
+
+  <script>
+    function selectAction(action) {
+      switch (action) {
+        case 'create':
+            clearForm();
+            break;
+        case 'edit':
+            const editExistingClient = document.getElementById('edit-existing-client');
+            const selectedClientId = editExistingClient.value;
+            if (selectedClientId) {
+            // Redirect to edit page with selected client ID
+            window.location.href = '/edit-client/' + selectedClientId;
+            } else {
+            alert('Selecione um cliente para editar.');
+            }
+            break;
+        case 'delete':
+            const deleteExistingClient = document.getElementById('delete-existing-client');
+            const selectedDeleteId = deleteExistingClient.value;
+            if (selectedDeleteId) {
+            if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                // Form submission with delete action
+                document.getElementById('delete-id').value = selectedDeleteId;
+                document.getElementById('client-form').submit();
+            }
+            } else {
+            alert('Selecione um cliente para excluir.');
+            }
+        break;
+          break;
+      }
+    }
+
+    function clearForm() {
+      document.getElementById('registration_id').value = '';
+      document.getElementById('client').value = '';
+      document.getElementById('client_type').value = '';
+      document.getElementById('identifier').value = '';
+      document.getElementById('legal_action').value = '';
+    }
+  </script>
+</body>
+</html>

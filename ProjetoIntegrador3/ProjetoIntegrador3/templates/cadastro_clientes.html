@@ -11,60 +11,259 @@
 <body>
   <h2>Registro e edição de clientes</h2>
 
-  <form id="client-form" method="post">
-    {% csrf_token %}
-    <div id="client-selection">
-      <label for="existing-client">Selecionar cliente existente:</label><br>
-      <select id="existing-client" name="existing_client">
-        <option value="">-- Selecione um cliente --</option>
-        </select>
-    </div>
+  <ul id="operation-selection">
+    <li><a href="#" onclick="selectAction('create')">Criar novo cliente</a></li>
+    <li><a href="#" onclick="selectAction('edit_id')">Editar cliente existente</a></li>
+    <li><a href="#" onclick="selectAction('delete_id')">Deletar cliente existente</a></li>
+  </ul>
 
+  <form id="client-form" method="post" action="{% url 'paginaCadastroClientes' %}">
+    {% csrf_token %}
     <div id="client-details">
       <h3>Dados do cliente</h3>
+      <label for="registration_id">ID do cliente:</label><br>
+      <input type="text" id="registration_id" name="registration_id" required><br>
       <label for="client">Nome do cliente:</label><br>
       <input type="text" id="client" name="client" required><br>
-
       <label for="client_type">Tipo de cliente:</label><br>
-      <input type="text" id="client_type" name="client_type" required><br>
+      <select id="client_type" name="client_type" required>
+        <option value="">-- Selecione o tipo de cliente --</option>
+        <option value="Pessoa Física">Pessoa Física</option>
+        <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+      </select><br>
 
       <label for="identifier">Identificador:</label><br>
       <input type="text" id="identifier" name="identifier" required><br>
-
-      <input type="submit" id="submit-button" value="Criar"> </div>
+      <label for="legal_action">Ação judicial:</label><br>
+      <input type="text" id="legal_action" name="legal_action" required><br>
+      <input type="submit" id="submit-button" value="Criar">
+    </div>
   </form>
 
-  {% if editing %}
-    <script>
-      // Set the form to editing mode (hide selection, show details, update button text)
-      document.getElementById('client-selection').style.display = 'none';
-      document.getElementById('client-details').style.display = 'block';
-      document.getElementById('submit-button').value = 'Atualizar';
+<div id="edit-section" style="display: none;">
+  <h3>Editar Cliente</h3>
+  <div id="edit-client-selection">
+    <label for="edit-existing-client">Selecionar cliente existente:</label><br>
+    <select id="edit-existing-client" name="registration_id">
+      <option value="">-- Selecione um cliente --</option>
+      {% for client in clients %}
+        <option value="{{ client.id }}">{{ client.client }}</option>
+      {% endfor %}
+    </select>
 
-      // Pre-fill form fields with existing client data (assuming data is passed in variables)
-      document.getElementById('client').value = '{{ client }}';
-      document.getElementById('client_type').value = '{{ client_type }}';
-      document.getElementById('identifier').value = '{{ identifier }}';
-    </script>
-  {% endif %}
+  <h3>Dados do cliente</h3>
+
+  <label for="registration_id">ID do cliente:</label><br>
+  <input type="text" id="registration_id" name="registration_id" required><br>
+  <label for="edit-client">Nome do cliente:</label><br>
+  <input type="text" id="edit-client" name="client" required> <br>
+  <label for="edit-client_type">Tipo de cliente:</label><br>
+  <select id="edit-client_type" name="client_type" required>
+    <option value="Pessoa Física">Pessoa Física</option>
+    <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+  </select><br>
+  <label for="edit-identifier">Identificador:</label><br>
+  <input type="text" id="edit-identifier" name="identifier" required> <br>
+  <label for="legal_action">Ação judicial:</label><br>
+  <input type="text" id="legal_action" name="legal_action" required><br>
+  <button id="update-button">Atualizar</button>
+  </div>
 
   <script>
-    // Handle form submission and logic for creating or editing clients (replace with your actual logic)
-    const form = document.getElementById('client-form');
-    form.addEventListener('submit', (event) => {
-      event.preventDefault(); // Prevent default form submission
+    function selectAction(action) {
+      const clientDetails = document.getElementById('client-details');
+      const submitButton = document.getElementById('submit-button');
+      const updateButton = document.getElementById('update-button');
+      const deleteButton = document.getElementById('delete-button');
 
-      const isEditing = '{{ editing }}'; // Check if editing mode is active
-
-      if (isEditing) {
-        // Handle client update logic here (e.g., send data to server)
-        alert('Cliente atualizado com sucesso!'); // Replace with your success message
+      switch (action) {
+        case 'create':
+          clientDetails.innerHTML = ""; // Clear previous content
+          const createClientContent = `
+            <h3>Dados do cliente</h3>
+            <label for="registration_id">ID do cliente:</label><br>
+            <input type="text" id="registration_id" name="registration_id" required><br>
+            <label for="client">Nome do cliente:</label><br>
+            <input type="text" id="client" name="client" required><br>
+            <label for="client_type">Tipo de cliente:</label><br>
+            <select id="client_type" name="client_type" required>
+              <option value="">-- Selecione o tipo de cliente --</option>
+              <option value="Pessoa Física">Pessoa Física</option>
+              <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+            </select><br>
+            <label for="identifier">Identificador:</label><br>
+            <input type="text" id="identifier" name="identifier" required><br>
+            <label for="legal_action">Ação judicial:</label><br>
+            <input type="text" id="legal_action" name="legal_action" required><br>
+            <input type="submit" id="submit-button" value="Criar">
+          `;
+          clientDetails.insertAdjacentHTML('beforeend', createClientContent);
+          submitButton.style.display = 'block';
+          updateButton.style.display = 'none';
+          deleteButton.style.display = 'none';
+          break;
+        case 'edit_id':
+          clientDetails.innerHTML = ""; // Clear previous content
+          const editClientContent = `
+            <h3>Dados do cliente</h3>
+              <label for="edit-client">Selecione um cliente para editar:</label><br>
+              <select id="edit-existing-client" name="registration_id">
+                <option value="">-- Selecione um cliente --</option>
+                  {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.client }}</option>
+                  {% endfor %}
+              </select><br>
+              <label for="edit-registration_id">ID do cliente:</label><br>
+              <input type="text" id="edit-registration_id" name="registration_id" required><br>
+              <label for="edit-client">Nome do cliente:</label><br>
+              <input type="text" id="edit-client" name="client" required> <br>
+              <label for="edit-client_type">Tipo de cliente:</label><br>
+              <select id="edit-client_type" name="client_type" required>
+                <option value="Pessoa Física">Pessoa Física</option>
+                <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+              </select><br>
+              <label for="edit-identifier">Identificador:</label><br>
+              <input type="text" id="edit-identifier" name="identifier" required> <br>
+              <label for="edit-legal_action">Ação judicial:</label><br>
+              <input type="text" id="edit-legal_action" name="legal_action" required><br>
+              <button id="update-button">Atualizar</button>
+          `;
+          clientDetails.insertAdjacentHTML('beforeend', editClientContent);
+          submitButton.style.display = 'none';
+          updateButton.style.display = 'block';
+          deleteButton.style.display = 'none';
+          break;
+        case 'delete_id':
+          clientDetails.innerHTML = ""; // Clear previous content
+          const deleteClientContent = `
+            <h3>Deletar Cliente</h3>
+              <label for="delete-existing-client">Selecionar cliente para deletar</label><br>
+                <select id="delete-existing-client" name="registration_id">
+                  <option value="">-- Selecione um cliente --</option>
+                  {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.client }}</option>
+                  {% endfor %}
+                </select><br>
+              <label for="delete-registration_id">ID do cliente:</label><br>
+              <input type="text" id="delete-registration_id" name="registration_id" required><br>
+              <label for="delete-existing-client">Nome do cliente:</label><br>
+              <input type="text" id="client" name="client" required><br>
+              <label for="client_type">Tipo de cliente:</label><br>
+              <input type="text" id="client_type" name="client_type" required><br>
+              <label for="identifier">Identificador:</label><br>
+              <input type="text" id="identifier" name="identifier" required><br>
+              <label for="delete-legal_action">Ação judicial:</label><br>
+              <input type="text" id="delete-legal_action" name="legal_action" required><br>
+              <input type="submit" id="submit-button" value="Deletar">
+          `;
+          clientDetails.insertAdjacentHTML('beforeend', deleteClientContent);
+          submitButton.style.display = 'none';
+          updateButton.style.display = 'none';
+          deleteButton.style.display = 'block';
+          break;
+        default:
+          break;
+      }
+    }
+  
+    document.getElementById('edit_id').addEventListener('change', function() {
+      const clientId = this.value;
+      if (clientId !== '') {
+        // Fetch client data from server
+        fetch('/get-client/' + clientId)
+          .then(response => response.json())
+          .then(clientData => {
+            if (clientData) {
+              // Populate form fields with client data
+              document.getElementById('registration_id').value = clientData.registration_id;
+              document.getElementById('edit-client').value = clientData.client;
+              document.getElementById('edit-client_type').value = clientData.client_type;
+              document.getElementById('edit-identifier').value = clientData.identifier;
+              document.getElementById('edit-legal_action').value = clientData.legal_action;
+              // Enable form fields for editing
+              document.getElementById('registration_id').disabled = false;
+              document.getElementById('edit-client').disabled = false;
+              document.getElementById('edit-client_type').disabled = false;
+              document.getElementById('edit-identifier').disabled = false;
+              document.getElementById('edit-legal_action').disabled = false;
+              // Show the form fields
+              document.getElementById('edit-client-details').style.display = 'block';
+            } else {
+              // Handle case where client data retrieval fails (e.g., client not found)
+              alert('Erro ao buscar dados do cliente. Tente novamente.');
+            }
+          })
+          .catch(error => {
+            // Handle network errors
+            console.error('Error fetching client data:', error);
+            alert('Erro ao buscar dados do cliente. Verifique sua conexão.');
+          });
       } else {
-        // Handle client creation logic here (e.g., send data to server)
-        alert('Cliente criado com sucesso!'); // Replace with your success message
+        // Hide the form fields if no client is selected
+        document.getElementById('edit-client-details').style.display = 'none';
+        // Disable form fields (optional, for consistency)
+        document.getElementById('registration_id').disabled = false;
+        document.getElementById('edit-client').disabled = false;
+        document.getElementById('edit-client_type').disabled = false;
+        document.getElementById('edit-identifier').disabled = false;
+        document.getElementById('edit-legal_action').disabled = false;
       }
     });
-  </script>
+    </script>
+  </div>
+
+<div id="delete_id" style="display: none;">
+    <h3>Deletar Cliente</h3>
+    <label for="delete-registration_id">ID do cliente:</label><br>
+    <input type="text" id="delete-registration_id" name="registration_id" required><br>
+    <label for="client">Nome do cliente:</label><br>
+    <input type="text" id="client" name="client" required><br>
+    <label for="client_type">Tipo de cliente:</label><br>
+    <select id="client_type" name="client_type" required>
+        <option value="">-- Selecione o tipo de cliente --</option>
+        <option value="Pessoa Física">Pessoa Física</option>
+        <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+    </select><br>
+    <label for="identifier">Identificador:</label><br>
+    <input type="text" id="identifier" name="identifier" required><br>
+    <input type="submit" id="submit-button" value="Criar">
+</div>
+
+  <script>
+    document.getElementById('delete_id').addEventListener('change', function() {
+        const clientId = this.value;
+        if (clientId !== '') {
+            // Fetch client data from server
+            fetch('/get-client/' + clientId)
+                .then(response => response.json())
+                .then(clientData => {
+                    if (clientData) {
+                        // Populate form fields with client data
+                        document.getElementById('registration_id').value = clientData.registration_id;
+                        document.getElementById('client').value = clientData.client;
+                        document.getElementById('client_type').value = clientData.client_type;
+                        document.getElementById('identifier').value = clientData.identifier;
+                        document.getElementById('legal_action').value = clientData.legal_action;
+                    } else {
+                        // Handle case where client data retrieval fails (e.g., client not found)
+                        alert('Erro ao buscar dados do cliente. Tente novamente.');
+                    }
+                })
+                .catch(error => {
+                    // Handle network errors
+                    console.error('Error fetching client data:', error);
+                    alert('Erro ao buscar dados do cliente. Verifique sua conexão.');
+                });
+        } else {
+            // Clear form fields if no client is selected
+            document.getElementById('registration_id').value = '';
+            document.getElementById('client').value = '';
+            document.getElementById('client_type').value = '';
+            document.getElementById('identifier').value = '';
+            document.getElementById('legal_action').value = '';
+        }
+    });
+</script>
 </body>
 {% endblock %}
 </html>

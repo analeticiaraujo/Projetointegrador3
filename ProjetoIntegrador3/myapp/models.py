@@ -8,15 +8,10 @@ class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
     stored_password = models.CharField(max_length=50)
     level = models.IntegerField()
-    
-
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
-
     def has_access(self, required_level):
-
         return self.level >= required_level
-
     def __str__(self):
         return self.username
     
@@ -35,6 +30,9 @@ class ClientRegistration(models.Model):
     client = models.CharField(max_length=100)
     client_type = models.CharField(max_length=20)
     identifier = models.CharField(max_length=14)
+    legal_action = models.CharField(default='', max_length=100),
+    def __str__(self):
+        return self.client
 
 class EntryValue(models.Model):
     legal_action = models.CharField(max_length=100)

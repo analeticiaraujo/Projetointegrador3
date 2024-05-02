@@ -35,6 +35,7 @@
       <legend>Edit User</legend>
       <label for="user_select">Select User:</label><br>
       <select id="user_select" name="user_id">
+        <option value="">Select User</option> <!-- Add blank option -->
         {% for user in users %}
         <option value="{{ user.id }}">{{ user.username }}</option>
         {% endfor %}
@@ -87,9 +88,10 @@
             <legend>Edit User</legend>
             <label for="user_select">Select User:</label><br>
             <select id="user_select" name="user_id">
-                {% for user in users %}
-                  <option value="{{ user.id }}">{{ user.username }}</option>
-                {% endfor %}
+              <option value="">Select User</option> <!-- Add blank option -->
+              {% for user in users %}
+              <option value="{{ user.id }}">{{ user.username }}</option>
+              {% endfor %}
             </select><br><br>
             <label for="new_username">New Username:</label><br>
             <input type="text" id="new_username" name="new_username" value=""><br>
@@ -97,40 +99,50 @@
             <input type="password" id="new_password" name="new_password" value=""><br>
             <label for="new_level">New Level:</label><br>
             <select id="new_level" name="new_level">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
             </select><br><br>
-            `;
-            userFields.insertAdjacentHTML('beforeend', editUserContent);
-            submitButton.value = "Save Changes";
-            break;
+          `;
+          userFields.insertAdjacentHTML('beforeend', editUserContent);
+          submitButton.value = "Save Changes";
+          break;
         case 'delete':
-            userFields.textContent = ""; // Clear previous content
-            const deleteUserContent = `
+          userFields.textContent = ""; // Clear previous content
+          const deleteUserContent = `
             <legend>Delete User</legend>
             <label for="user_select_delete">Select User:</label><br>
-            <select id="user_select" name="user_id">
-                {% for user in users %}
-                  <option value="{{ user.id }}">{{ user.username }}</option>
-                {% endfor %}
-              </select>
-            `;
-            userFields.insertAdjacentHTML('beforeend', deleteUserContent);
-            submitButton.value = "Delete User";
-            submitButton.setAttribute('disabled', true); // Disable submit button for delete action (handled in confirmDelete())
-            break;
+            <select id="user_select" name="user_id" onchange="toggleDeleteButton(this.value)">
+              <option value="">Select User</option> <!-- Add blank option -->
+              {% for user in users %}
+              <option value="{{ user.id }}">{{ user.username }}</option>
+              {% endfor %}
+            </select>
+          `;
+          userFields.insertAdjacentHTML('beforeend', deleteUserContent);
+          toggleDeleteButton(""); // Initially disable the delete button
+          submitButton.value = "Deletar Usuário"; // Change button text
+          break;
         default:
-            break;
-        }
+          break;
+      }
+    }
+
+    function toggleDeleteButton(userId) {
+      const submitButton = document.getElementById('submitButton');
+      if (userId) {
+        submitButton.removeAttribute('disabled'); // Enable the submit button
+      } else {
+        submitButton.setAttribute('disabled', true); // Disable the submit button
+      }
     }
 
     function confirmDelete() {
-        if (confirm("Você tem certeza?")) {
+      if (confirm("Você tem certeza?")) {
         document.getElementById('userForm').submit();
-        }
+      }
     }
-    </script>
-    </body>
-    {% endblock %}
+  </script>
+</body>
+{% endblock %}
 </html>
