@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <head>
@@ -10,40 +10,78 @@
 </head>
 <body>
     <h2>Recebimentos e Despesas</h2>
+    <ul>
+        <li><a href="#" onclick="selectAction('recebimentos')">Recebimentos</a></li>
+        <li><a href="#" onclick="selectAction('despesas')">Despesas</a></li>
+    </ul>
+
+    <form id="billForm" method="post" action="{% url 'paginaRecebimentosDespesas' %}">
+    {% csrf_token %}  
     <form method="post">
         {% csrf_token %}
-        <h3>Recebimentos</h3>
-        <label for="received_legal_action">Ação Legal:</label><br>
-        <input type="text" id="received_legal_action" name="received_legal_action"><br>
-        <label for="received_value">Valor Recebido:</label><br>
-        <input type="text" id="received_value" name="received_value"><br>
-        <label for="received_client">Cliente:</label><br>
-        <select id="received_client" name="received_client">
-            {% for client in clients %}
-            <option value="{{ client.client_id }}">{{ client.client_name }}</option>
-            {% endfor %}
-        </select><br><br>
-
-        <h3>Despesas</h3>
-        <label for="bill_type">Tipo de Despesa:</label><br>
-        <input type="text" id="bill_type" name="bill_type"><br>
-        <label for="invoice">Fatura:</label><br>
-        <input type="text" id="invoice" name="invoice"><br>
-        <label for="due_date">Data de Vencimento:</label><br>
-        <input type="text" id="due_date" name="due_date"><br>
-        <label for="amount">Valor:</label><br>
-        <input type="text" id="amount" name="amount"><br>
-        <label for="payment_method">Método de Pagamento:</label><br>
-        <input type="text" id="payment_method" name="payment_method"><br>
-        <label for="client_registration">Cliente:</label><br>
-        <select id="client_registration" name="client_registration">
-            {% for client in clients %}
-            <option value="{{ client.client_id }}">{{ client.client_name }}</option>
-            {% endfor %}
-        </select><br><br>
-
-        <input type="submit" value="Salvar">
+        <div id="recebimentos-section" style="display: none;">
+            <h3>Recebimentos</h3>
+            <label for="received_legal_action">Ação Legal:</label><br>
+            <input type="text" id="received_legal_action" name="received_legal_action"><br>
+            <label for="received_value">Valor Recebido:</label><br>
+            <input type="text" id="received_value" name="received_value"><br>
+            <div id="client-selection-recebimentos">
+                <label for="existing-client-recebimentos">Selecionar cliente existente:</label><br>
+                <select id="existing-client-recebimentos" name="registration_id_recebimentos">
+                    <option value="">-- Selecione um cliente --</option>
+                    {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.client }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+            </div>
+        </div>
+        <div id="despesas-section" style="display: none;">
+            <h3>Despesas</h3>
+            <label for="bill_type">Tipo de Despesa:</label><br>
+            <input type="text" id="bill_type" name="bill_type"><br>
+            <label for="invoice">Fatura:</label><br>
+            <input type="text" id="invoice" name="invoice"><br>
+            <label for="due_date">Data de Vencimento:</label><br>
+            <input type="text" id="due_date" name="due_date"><br>
+            <label for="amount">Valor:</label><br>
+            <input type="text" id="amount" name="amount"><br>
+            <label for="payment_method">Método de Pagamento:</label><br>
+            <input type="text" id="payment_method" name="payment_method"><br>
+            <div id="client-selection-despesas">
+                <label for="existing-client-despesas">Selecionar cliente:</label><br>
+                <select id="existing-client-despesas" name="registration_id_despesas">
+                    <option value="">-- Selecione um cliente --</option>
+                    {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.client }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+            </div>
+        </div>
+        <input type="submit" id="submitButton" value="Salvar">
     </form>
+
+    <script>
+        function selectAction(action) {
+            const recebimentosSection = document.getElementById('recebimentos-section');
+            const despesasSection = document.getElementById('despesas-section');
+            const submitButton = document.getElementById('submitButton');
+
+            switch (action) {
+                case 'recebimentos':
+                    recebimentosSection.style.display = 'block';
+                    despesasSection.style.display = 'none';
+                    break;
+                case 'despesas':
+                    recebimentosSection.style.display = 'none';
+                    despesasSection.style.display = 'block';
+                    break;
+                default:
+                    break;
+            }
+        }
+    </script>
 </body>
 {% endblock %}
 </html>

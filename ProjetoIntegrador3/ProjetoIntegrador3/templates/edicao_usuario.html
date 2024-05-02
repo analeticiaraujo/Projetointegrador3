@@ -5,14 +5,14 @@
   {% block content %}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% if user.id %}Edit User{% else %}Create User{% endif %}</title>
+  <title>{% if user.id %}Editar usuário{% else %}Criar Usuário{% endif %}</title>
 </head>
 <body>
   <h2>User Management</h2>
   <ul>
-    <li><a href="#" onclick="selectAction('create')">Create User</a></li>
-    <li><a href="#" onclick="selectAction('edit')">Edit User</a></li>
-    <li><a href="#" onclick="selectAction('delete')">Delete User</a></li>
+    <li><a href="#" onclick="selectAction('create')">Criar Usuário</a></li>
+    <li><a href="#" onclick="selectAction('edit')">Editar Usuário</a></li>
+    <li><a href="#" onclick="selectAction('delete')">Deletar Usuário</a></li>
   </ul>
 
   <form id="userForm" method="post" action="{% url 'paginaEdicaoUsuario' %}">
@@ -20,38 +20,38 @@
 
     <fieldset id="userFields">
       {% if user.id is none %}
-      <legend>Create User</legend>
-      <label for="username">Username:</label><br>
+      <legend>Criar Usuário</legend>
+      <label for="username">Nome de usuário:</label><br>
       <input type="text" id="username" name="username" value=""><br>
-      <label for="password">Password:</label><br>
+      <label for="password">Senha:</label><br>
       <input type="password" id="password" name="password" value=""><br>
-      <label for="level">Level:</label><br>
+      <label for="level">Nível de acesso:</label><br>
       <select id="level" name="level">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
       </select><br><br>
       {% elif user.id %}
-      <legend>Edit User</legend>
-      <label for="user_select">Select User:</label><br>
+      <legend>Editar Usuário</legend>
+      <label for="user_select">Nome de usuário:</label><br>
       <select id="user_select" name="user_id">
-        <option value="">Select User</option> <!-- Add blank option -->
+        <option value="">Selecionar Usuário</option> <!-- Add blank option -->
         {% for user in users %}
         <option value="{{ user.id }}">{{ user.username }}</option>
         {% endfor %}
       </select><br><br>
-      <label for="new_username">New Username:</label><br>
+      <label for="new_username">Novo nome de Usuário:</label><br>
       <input type="text" id="new_username" name="new_username" value=""><br>
-      <label for="new_password">New Password:</label><br>
+      <label for="new_password">Nova senha:</label><br>
       <input type="password" id="new_password" name="new_password" value=""><br>
-      <label for="new_level">New Level:</label><br>
+      <label for="new_level">Novo nível de acesso:</label><br>
       <select id="new_level" name="new_level">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
       </select><br><br>
       {% else %}
-      <p>Please select a user to edit or create a new user.</p>
+      <p>Por favor selecione um usuário para editar.</p>
       {% endif %}
     </fieldset>
 
@@ -68,7 +68,7 @@
           userFields.textContent = ""; // Clear previous content
           const createUserContent = `
             <legend>Create User</legend>
-            <label for="username">Username:</label><br>
+            <label for="username">Nome do usuário:</label><br>
             <input type="text" id="username" name="username" value=""><br>
             <label for="password">Password:</label><br>
             <input type="password" id="password" name="password" value=""><br>
@@ -85,19 +85,19 @@
         case 'edit':
           userFields.textContent = ""; // Clear previous content
           const editUserContent = `
-            <legend>Edit User</legend>
-            <label for="user_select">Select User:</label><br>
+            <legend>Editar Usuário</legend>
+            <label for="user_select">Selecionar usuário:</label><br>
             <select id="user_select" name="user_id">
-              <option value="">Select User</option> <!-- Add blank option -->
+              <option value="">Selecionar usuário</option> <!-- Add blank option -->
               {% for user in users %}
               <option value="{{ user.id }}">{{ user.username }}</option>
               {% endfor %}
             </select><br><br>
-            <label for="new_username">New Username:</label><br>
+            <label for="new_username">Novo nome de usuário</label><br>
             <input type="text" id="new_username" name="new_username" value=""><br>
-            <label for="new_password">New Password:</label><br>
+            <label for="new_password">Nova senha</label><br>
             <input type="password" id="new_password" name="new_password" value=""><br>
-            <label for="new_level">New Level:</label><br>
+            <label for="new_level">Novo nível de acesso: </label><br>
             <select id="new_level" name="new_level">
               <option value="1">1</option>
               <option value="2">2</option>
@@ -110,10 +110,10 @@
         case 'delete':
           userFields.textContent = ""; // Clear previous content
           const deleteUserContent = `
-            <legend>Delete User</legend>
-            <label for="user_select_delete">Select User:</label><br>
+            <legend>Deletar usuário</legend>
+            <label for="user_select_delete">Selecionar usuário:</label><br>
             <select id="user_select" name="user_id" onchange="toggleDeleteButton(this.value)">
-              <option value="">Select User</option> <!-- Add blank option -->
+              <option value="">Selecionar usuário</option> <!-- Add blank option -->
               {% for user in users %}
               <option value="{{ user.id }}">{{ user.username }}</option>
               {% endfor %}
