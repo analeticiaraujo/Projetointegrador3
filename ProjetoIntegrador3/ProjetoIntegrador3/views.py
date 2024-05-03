@@ -16,11 +16,12 @@ def login_view(request):
         
         # Authenticate the user directly with the provided credentials
         user = authenticate(request, username=username, password=password)
-        
+        print(f'{user}')
         if user is not None:
             login(request, user)
+            print(f"User {username} logged in successfully.")
             # Redirect to the appropriate page after successful login
-            return redirect('relatorios')  # Replace 'relatorios' with your desired URL
+            return redirect('relatorios.html')  # Replace 'relatorios' with your desired URL
         
         # If authentication fails, show an error message
         return render(request, 'login.html', {'error_message': 'Invalid username or password.'})
@@ -66,10 +67,12 @@ def pagina_recebimentos_e_despesas(request):
     # Consulta ao banco de dados para obter os pagamentos de contas e valores recebidos
     bill_payments = BillPayment.objects.all()
     entry_values = EntryValue.objects.all()
-
+    clients = ClientRegistration.objects.all()
+    
     context = {
         'bill_payments': bill_payments,
-        'entry_values': entry_values
+        'entry_values': entry_values,
+        'clients': clients
     }
     return render(request, 'recebimentosedespesas.html', context)
 

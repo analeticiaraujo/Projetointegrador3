@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
-    stored_password = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
     level = models.IntegerField()
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

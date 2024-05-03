@@ -8,7 +8,7 @@
   <title>{% if user.id %}Editar usuário{% else %}Criar Usuário{% endif %}</title>
 </head>
 <body>
-  <h2>User Management</h2>
+  <h2>Edição de usuários</h2>
   <ul>
     <li><a href="#" onclick="selectAction('create')">Criar Usuário</a></li>
     <li><a href="#" onclick="selectAction('edit')">Editar Usuário</a></li>
@@ -67,12 +67,12 @@
         case 'create':
           userFields.textContent = ""; // Clear previous content
           const createUserContent = `
-            <legend>Create User</legend>
+            <legend>Criar usuário</legend>
             <label for="username">Nome do usuário:</label><br>
             <input type="text" id="username" name="username" value=""><br>
-            <label for="password">Password:</label><br>
+            <label for="password">Senha:</label><br>
             <input type="password" id="password" name="password" value=""><br>
-            <label for="level">Level:</label><br>
+            <label for="level">Nível de acesso:</label><br>
             <select id="level" name="level">
               <option value="1">1</option>
               <option value="2">2</option>
